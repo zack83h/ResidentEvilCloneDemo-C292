@@ -9,11 +9,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce;
     [SerializeField] float mouseSensitivity;
     [SerializeField] float verticalLookLimit;
+
     private bool isGrounded = true;
     private float xRotation; //set to 0 by default
 
     [SerializeField] Transform fpsCamera;
     private Rigidbody rb;
+    [SerializeField] private Transform firePoint;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +36,12 @@ public class PlayerController : MonoBehaviour
         {
             Jump();
         }
+
+        if(Input.GetMouseButtonDown(0)) //0 is the left mouse button, 1 is left 2 is middle
+        {
+            Shoot();
+        }
+
     }
 
     void LookAround()
@@ -86,4 +94,24 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
     }
+
+    private void Shoot()
+    {
+        RaycastHit hit;
+        if(Physics.Raycast(firePoint.position, firePoint.forward, out hit, 100))
+        {
+            Debug.DrawRay(firePoint.position, firePoint.forward * hit.distance, Color.red, 100);
+            if(hit.transform.CompareTag("Zombie"))
+            {
+                this.transform.GetComponent<Enemy>().TakeDamage(1);
+            }
+        }
+    }
+
+    //private void ShootBullter()
+    //{
+    //    GameObject bullet = Instantiate(Projectile, firePoint.position, firePoint.forward);
+    //    bullet.GetComponent<Rigidbody>().AddForce(firePoint.forward * 10, ForceMode.Impulse);
+    //}
+
 }
